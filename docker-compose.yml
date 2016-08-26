@@ -1,0 +1,55 @@
+version: '2'
+
+volumes:
+   pgdb:
+
+services:
+  redis:
+    image: redis
+
+  postgres:
+    image: postgres:9.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DBNAME: sentry
+      POSTGRES_DBUSER: sentry
+      POSTGRES_DBPASS: sentry
+    volumes:
+     - pgdb:/var/lib/postgresql/data
+
+  sentry_web:
+    build: .
+    command: "sentry run web"
+    depends_on:
+     - redis
+     - postgres
+    links:
+     - redis
+     - postgres
+    ports:
+     - 9000:9000
+    environment: &SENTRY_ENVIRONMENT
+      SENTRY_SECRET_KEY: verysecret
+      SENTRY_POSTGRES_HOST: postgres
+      SENTRY_DB_USER: postgres
+      SENTRY_DB_PASSWORD: postgres
+      SENTRY_REDIS_HOST: redis
+      GOOGLE_CLIENT_ID:
+      GOOGLE_CLIENT_SECRET:
+
+  sentry_cron:
+    build: .
+    depends_on:
+     - redis
+     - postgres
+    command: "sentry run cron"
+    environment: *SENTRY_ENVIRONMENT
+
+  sentry_worker:
+    build: .
+    depends_on:
+     - redis
+     - postgres
+    command: "sentry run worker"
+    environment: *SENTRY_ENVIRONMENT

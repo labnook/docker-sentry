@@ -1,3 +1,3 @@
-web: sentry start
-worker: sentry celery worker
-beat: sentry celery beat
+web: sentry run web
+worker: sentry run worker
+cron: sentry run cron
