@@ -1,2 +1,2 @@
-https://github.com/getsentry/sentry-auth-google/zipball/master
+https://github.com/ianyamey/sentry-auth-google/zipball/master
 sentry-slack~=0.5.0
